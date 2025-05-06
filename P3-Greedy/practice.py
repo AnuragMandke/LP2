@@ -5,39 +5,37 @@ class DisjointSet:
 
     def find(self, v):
         if self.parent[v] != v:
-            self.parent[v] = self.find(self.parent[v])  # Path compression
-        return self.parent[v]
+            self.parent[v] = self.find(self.parent[v])
 
+        return self.parent[v]
+    
     def union(self, u, v):
         root_u = self.find(u)
         root_v = self.find(v)
 
         if root_u != root_v:
-            # Union by rank
-            if self.rank[root_u] < self.rank[root_v]:
+            if root_u < root_v:
                 self.parent[root_u] = root_v
-            elif self.rank[root_u] > self.rank[root_v]:
+            elif root_u > root_v:
                 self.parent[root_v] = root_u
             else:
                 self.parent[root_v] = root_u
                 self.rank[root_u] += 1
 
-
 def kruskal(vertices, edges):
-    # Sort edges based on weight
-    edges.sort(key=lambda edges: edges[2])
+    edges.sort(key = lambda edge: edge[2])
     ds = DisjointSet(vertices)
+
     mst = []
 
     for u, v, weight in edges:
         if ds.find(u) != ds.find(v):
-            ds.union(u, v)
+            ds.union(u,v)
             mst.append((u, v, weight))
 
     return mst
 
 
-# Example usage
 vertices = ['A', 'B', 'C', 'D', 'E']
 edges = [
     ('A', 'B', 1),
@@ -50,6 +48,5 @@ edges = [
 ]
 
 mst = kruskal(vertices, edges)
-print("Edges in the MST:")
 for u, v, weight in mst:
     print(f"{u} - {v}: {weight}")

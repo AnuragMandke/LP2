@@ -3,12 +3,10 @@ class Graph:
         self.vertices = vertices
         self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
 
-    # Function to add an edge to the graph
     def add_edge(self, u, v, weight):
         self.graph[u][v] = weight
         self.graph[v][u] = weight
 
-    # Function to find the vertex with the minimum key value
     def min_key(self, keys, mst_set):
         min_val = float('inf')
         min_index = None
@@ -19,23 +17,21 @@ class Graph:
                 min_index = v
 
         return min_index
+    
 
-    # Function to construct and print MST
     def prim_mst(self):
-        # Key values used to pick minimum weight edge in cut
         keys = [float('inf')] * self.vertices
-        parents = [None] * self.vertices  # Array to store constructed MST
-        keys[0] = 0  # Make key 0 so that this vertex is picked as first vertex
+        parents = [None] * self.vertices  
+        keys[0] = 0  
         mst_set = [False] * self.vertices
 
-        parents[0] = -1  # First node is always the root of MST
+        parents[0] = -1 
 
         for _ in range(self.vertices):
-            u = self.min_key(keys, mst_set)  # Pick the minimum key vertex from the set of vertices not yet included in MST
+            u = self.min_key(keys, mst_set)  
 
-            mst_set[u] = True  # Add the picked vertex to the MST set
+            mst_set[u] = True  
 
-            # Update key value and parent index of the adjacent vertices of the picked vertex
             for v in range(self.vertices):
                 if self.graph[u][v] > 0 and not mst_set[v] and keys[v] > self.graph[u][v]:
                     keys[v] = self.graph[u][v]

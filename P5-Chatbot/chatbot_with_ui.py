@@ -79,7 +79,7 @@ patterns = [
     (r'(.*) (tiguan|Tiguan)',
      [f"The Volkswagen Tiguan: {', '.join(cars['Tiguan'])}. Would you like to know more about this model's variants, engines, or transmissions?"]),
     (r'(.*) (price|cost)',
-     ['Prices vary by region, variant, and specific configuration. Would you like to schedule a visit to a dealership for detailed pricing?']),
+     [f"Prices vary by region, variant, and specific configuration. Would you like to schedule a visit to a dealership for detailed pricing?"]),
     (r'(.*) (test drive|testdrive)',
      ['We can arrange a test drive at your nearest Volkswagen dealership. Would you like me to help you schedule one?']),
     (r'(.*) (book|schedule|appointment)',
@@ -97,32 +97,43 @@ def schedule_appointment(car_model, variant, name, contact):
 
 
 def main():
-    print("\nHello! Welcome to the Volkswagen ChatBot. How can I assist you today?")
+    import tkinter as tk
+    from tkinter import scrolledtext
 
-    while True:
-        user_input = input("You: ")
-        response = vw_bot.respond(user_input)
-        print("VW Bot:", response)
+    root = tk.Tk()
+    root.title("VW ChatBot")
 
-        # extract information for scheduling appointments
-        if any(word in user_input.lower() for word in ['book', 'schedule', 'appointment']):
-            car_model = input("Which Volkswagen model are you interested in? (Polo/Golf/Tiguan): ")
+    chat_log = scrolledtext.ScrolledText(root, state='disabled', width=60, height=20, wrap='word')
+    chat_log.pack(padx=10, pady=10)
 
-            # Display variants for selected model
-            if car_model in car_variants:
-                print(f"Available variants for {car_model}: {', '.join(car_variants[car_model])}")
-                variant = input(f"Which {car_model} variant interests you? : ")
-            else:
-                variant = "Standard"
+    entry_frame = tk.Frame(root)
+    entry_frame.pack(fill='x', padx=10, pady=(0,10))
+    user_input = tk.Entry(entry_frame, width=50)
+    user_input.pack(side='left', fill='x', expand=True)
+    send_button = tk.Button(entry_frame, text="Send", width=10, command=lambda: send_message())
+    send_button.pack(side='left', padx=(5,0))
 
-            name = input("Could you please provide your name? : ")
-            contact = input("And your contact number or email? : ")
-            booking_response = schedule_appointment(car_model, variant, name, contact)
-            print("VW Bot:", booking_response)
+    def send_message():
+        msg = user_input.get()
+        if not msg.strip():
+            return
+        chat_log.config(state='normal')
+        chat_log.insert('end', "You: " + msg + "\n")
+        response = vw_bot.respond(msg)
+        if response:
+            chat_log.insert('end', "VW Bot: " + response + "\n")
+        else:
+            chat_log.insert('end', "VW Bot: Could not understand context.\n")
+        chat_log.see('end')
+        chat_log.config(state='disabled')
+        user_input.delete(0, 'end')
 
-        # check if the user wants to end the conversation
-        if any(word in user_input.lower() for word in ['bye', 'goodbye']):
-            break
+    chat_log.config(state='normal')
+    chat_log.insert('end', "VW Bot: Hello! Welcome to the Volkswagen ChatBot. How can I assist you today?\n")
+    chat_log.config(state='disabled')
+
+    root.bind('<Return>', lambda event: send_message())
+    root.mainloop()
 
 
 main()
