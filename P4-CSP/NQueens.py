@@ -14,7 +14,6 @@ def solve_n_queens(board, col, n):
             if solve_n_queens(board, col + 1, n):
                 return True
             board[row][col] = 0  # Backtrack
-
     return False
 
 def is_safe(board, row, col, n):
@@ -29,7 +28,6 @@ def is_safe(board, row, col, n):
             if (i + j == row + col) or (i - j == row - col):
                 if board[i][j] == 1:
                     return False
-
     return True
 
 
